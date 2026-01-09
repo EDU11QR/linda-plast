@@ -4,13 +4,15 @@ import { Plus, Minus, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Product } from '@/types/product';
 import { useQuote } from '@/context/QuoteContext';
-import preformsLineup from '@/assets/preforma46gr.png';
+import preformsLineup from '@/assets/preforms-lineup.png';
 
 interface ProductCardProps {
   product: Product;
   index: number;
+  onClick?: () => void; // Prop opcional para manejar el click en la tarjeta
 }
 
+// Etiquetas de sectores en español
 const sectorLabels: Record<string, string> = {
   bebidas: 'Bebidas',
   alimentacion: 'Alimentación',
@@ -18,18 +20,25 @@ const sectorLabels: Record<string, string> = {
   higiene: 'Higiene',
 };
 
+// Estilos de colores para las etiquetas de sector (fondo claro + borde + texto oscuro)
 const sectorColors: Record<string, string> = {
-  bebidas: 'bg-blue-500/10 text-blue-600',
-  alimentacion: 'bg-amber-500/10 text-amber-600',
-  limpieza: 'bg-emerald-500/10 text-emerald-600',
-  higiene: 'bg-violet-500/10 text-violet-600',
+  bebidas: 'bg-blue-100 text-blue-700 border border-blue-200 shadow-sm',
+  alimentacion: 'bg-amber-100 text-amber-700 border border-amber-200 shadow-sm',
+  limpieza: 'bg-emerald-100 text-emerald-700 border border-emerald-200 shadow-sm',
+  higiene: 'bg-violet-100 text-violet-700 border border-violet-200 shadow-sm',
 };
 
-const ProductCard = ({ product, index }: ProductCardProps) => {
+/**
+ * Componente Tarjeta de Producto.
+ * Muestra la información resumida de un producto en la grilla.
+ */
+const ProductCard = ({ product, index, onClick }: ProductCardProps) => {
   const [quantity, setQuantity] = useState(1);
   const { addItem, setIsOpen } = useQuote();
 
-  const handleAddToQuote = () => {
+  // Agregar a la cotización (Carrito)
+  const handleAddToQuote = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Evita abrir el modal al hacer click en "Añadir"
     addItem(product, quantity);
     setIsOpen(true);
     setQuantity(1);
@@ -41,21 +50,23 @@ const ProductCard = ({ product, index }: ProductCardProps) => {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.3, delay: index * 0.05 }}
-      className="card-industrial rounded-2xl overflow-hidden bg-card border border-border group"
+      onClick={onClick}
+      className="card-industrial rounded-2xl overflow-hidden bg-card border border-border group cursor-pointer hover:shadow-lg transition-all duration-300"
     >
-      {/* Image */}
+      {/* Sección de Imagen */}
       <div className="relative h-48 bg-gradient-to-br from-muted to-muted/50 overflow-hidden">
         <img
-          src={preformsLineup}
+          src={product.image || preformsLineup}
           alt={product.name}
           className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-300"
         />
+        {/* Etiqueta de Sector */}
         <span className={`absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-medium ${sectorColors[product.sector]}`}>
           {sectorLabels[product.sector]}
         </span>
       </div>
 
-      {/* Content */}
+      {/* Contenido de la Tarjeta */}
       <div className="p-5">
         <h3 className="font-display font-semibold text-foreground mb-1">
           {product.name}
@@ -64,7 +75,7 @@ const ProductCard = ({ product, index }: ProductCardProps) => {
           {product.description}
         </p>
 
-        {/* Specs */}
+        {/* Especificaciones */}
         <div className="flex gap-2 mb-4">
           <span className="px-2 py-1 rounded-md bg-muted text-xs font-medium text-muted-foreground">
             {product.gramaje}g
@@ -74,8 +85,9 @@ const ProductCard = ({ product, index }: ProductCardProps) => {
           </span>
         </div>
 
-        {/* Quantity Selector */}
-        <div className="flex items-center justify-between gap-3">
+        {/* Selector de Cantidad y Botón Añadir */}
+        {/* stopPropagation evita que al cambiar la cantidad se abra el modal */}
+        <div className="flex items-center justify-between gap-3" onClick={(e) => e.stopPropagation()}>
           <div className="flex items-center gap-2 bg-muted rounded-lg p-1">
             <button
               onClick={() => setQuantity(Math.max(1, quantity - 1))}

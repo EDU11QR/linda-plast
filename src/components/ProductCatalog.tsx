@@ -2,10 +2,14 @@ import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Layers, GlassWater, UtensilsCrossed, SprayCan, Droplet, SlidersHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { products, gramajeRanges, tipoCuelloOptions } from '@/data/products';
+import { gramajeRanges, tipoCuelloOptions } from '@/data/products';
+import { useProducts } from '@/context/ProductContext';
 import ProductCard from './ProductCard';
+import ProductDetailModal from './ProductDetailModal';
 import preformsLineup from '@/assets/preforms-lineup.png';
+import { Product } from '@/types/product';
 
+// Iconos para cada sector
 const sectorIcons: Record<string, React.ElementType> = {
   all: Layers,
   bebidas: GlassWater,
@@ -14,6 +18,7 @@ const sectorIcons: Record<string, React.ElementType> = {
   higiene: Droplet,
 };
 
+// Lista de sectores disponibles para el filtro
 const sectors = [
   { id: 'all', label: 'Todos' },
   { id: 'bebidas', label: 'Bebidas' },
@@ -22,23 +27,43 @@ const sectors = [
   { id: 'higiene', label: 'Higiene' },
 ];
 
+/**
+ * Componente Principal del Catálogo de Productos.
+ * Maneja el listado, filtrado y selección de productos.
+ */
 const ProductCatalog = () => {
+  // Obtener productos del contexto global
+  const { products } = useProducts();
+
+  // Estados para los filtros
   const [activeSector, setActiveSector] = useState('all');
   const [activeGramaje, setActiveGramaje] = useState<{ min: number; max: number } | null>(null);
   const [activeCuello, setActiveCuello] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
 
+  // Estado para el producto seleccionado (Modal)
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
+  // Lógica de filtrado de productos (Memorizada para rendimiento)
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
+      // 1. Filtro por Sector
       const sectorMatch = activeSector === 'all' || product.sector === activeSector;
+
+      // 2. Filtro por Gramaje (Rango)
       const gramajeMatch =
         !activeGramaje ||
         (product.gramaje >= activeGramaje.min && product.gramaje <= activeGramaje.max);
+
+      // 3. Filtro por Tipo de Cuello
       const cuelloMatch = !activeCuello || product.tipoCuello === activeCuello;
+
+      // Retorna true solo si cumple TODAS las condiciones
       return sectorMatch && gramajeMatch && cuelloMatch;
     });
-  }, [activeSector, activeGramaje, activeCuello]);
+  }, [products, activeSector, activeGramaje, activeCuello]);
 
+  // Función para resetear todos los filtros
   const clearFilters = () => {
     setActiveSector('all');
     setActiveGramaje(null);
@@ -50,7 +75,7 @@ const ProductCatalog = () => {
   return (
     <section id="productos" className="py-20 bg-background">
       <div className="container mx-auto px-4">
-        {/* Header */}
+        {/* Encabezado del Catálogo */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -64,12 +89,12 @@ const ProductCatalog = () => {
             Nuestras <span className="text-gradient">Preformas PET</span>
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Amplia variedad de preformas para todos los sectores industriales. 
+            Amplia variedad de preformas para todos los sectores industriales.
             Diferentes gramajes y tipos de cuello para cada aplicación.
           </p>
         </motion.div>
 
-        {/* Showcase Image */}
+        {/* Imagen Destacada (Showcase) */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
@@ -85,7 +110,9 @@ const ProductCatalog = () => {
           </div>
         </motion.div>
 
-        {/* Sector Filters */}
+        {/* --- FILTROS --- */}
+
+        {/* 1. Filtros de Sector (Botones) */}
         <div className="flex flex-wrap items-center justify-center gap-3 mb-8">
           {sectors.map((sector) => {
             const Icon = sectorIcons[sector.id];
@@ -102,6 +129,7 @@ const ProductCatalog = () => {
               </Button>
             );
           })}
+          {/* Botón para mostrar/ocultar filtros avanzados */}
           <Button
             variant="ghost"
             size="lg"
@@ -113,7 +141,7 @@ const ProductCatalog = () => {
           </Button>
         </div>
 
-        {/* Technical Filters */}
+        {/* 2. Filtros Avanzados (Gramaje y Cuello) */}
         <AnimatePresence>
           {showFilters && (
             <motion.div
@@ -124,7 +152,7 @@ const ProductCatalog = () => {
             >
               <div className="bg-muted/50 rounded-2xl p-6 border border-border">
                 <div className="grid md:grid-cols-2 gap-6">
-                  {/* Gramaje Filter */}
+                  {/* Filtro Gramaje */}
                   <div>
                     <h4 className="text-sm font-medium text-foreground mb-3">Gramaje</h4>
                     <div className="flex flex-wrap gap-2">
@@ -148,7 +176,7 @@ const ProductCatalog = () => {
                     </div>
                   </div>
 
-                  {/* Tipo de Cuello Filter */}
+                  {/* Filtro Tipo de Cuello */}
                   <div>
                     <h4 className="text-sm font-medium text-foreground mb-3">
                       Tipo de Cuello
@@ -188,20 +216,36 @@ const ProductCatalog = () => {
           )}
         </AnimatePresence>
 
-        {/* Results Count */}
+        {/* Contador de Resultados */}
         <p className="text-sm text-muted-foreground mb-6">
           Mostrando {filteredProducts.length} productos
         </p>
 
-        {/* Products Grid */}
+        {/* --- GRID DE PRODUCTOS --- */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           <AnimatePresence mode="popLayout">
             {filteredProducts.map((product, index) => (
-              <ProductCard key={product.id} product={product} index={index} />
+              <ProductCard
+                key={product.id}
+                product={product}
+                index={index}
+                onClick={() => setSelectedProduct(product)} // Al hacer click, setea el producto seleccionado
+              />
             ))}
           </AnimatePresence>
         </div>
 
+        {/* --- MODAL DE DETALLE --- */}
+        <AnimatePresence>
+          {selectedProduct && (
+            <ProductDetailModal
+              product={selectedProduct}
+              onClose={() => setSelectedProduct(null)} // Cierra el modal limpiando el estado
+            />
+          )}
+        </AnimatePresence>
+
+        {/* Estado Vacío (Sin resultados) */}
         {filteredProducts.length === 0 && (
           <motion.div
             initial={{ opacity: 0 }}

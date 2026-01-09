@@ -58,7 +58,7 @@ const ValueCards = () => {
             Compromiso con la <span className="text-gradient">Excelencia</span>
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            En Linda Plast combinamos tecnología avanzada con un profundo compromiso ambiental 
+            En Linda Plast combinamos tecnología avanzada con un profundo compromiso ambiental
             para ofrecer las mejores soluciones en preformas PET.
           </p>
         </motion.div>
@@ -74,11 +74,10 @@ const ValueCards = () => {
               className="card-industrial rounded-2xl p-6 bg-card border border-border group"
             >
               <div
-                className={`w-14 h-14 rounded-xl flex items-center justify-center mb-4 transition-colors ${
-                  value.color === 'primary'
+                className={`w-14 h-14 rounded-xl flex items-center justify-center mb-4 transition-colors ${value.color === 'primary'
                     ? 'bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground'
                     : 'bg-secondary/10 text-secondary group-hover:bg-secondary group-hover:text-secondary-foreground'
-                }`}
+                  }`}
               >
                 <value.icon className="w-7 h-7" />
               </div>

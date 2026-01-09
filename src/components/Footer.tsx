@@ -1,4 +1,5 @@
-import { Factory, Phone, Mail, MapPin, Linkedin, Facebook, Instagram } from 'lucide-react';
+import { Factory, Phone, Mail, MapPin, Linkedin, Facebook, Instagram, Lock } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
@@ -141,6 +142,10 @@ const Footer = () => {
             <a href="#" className="text-primary-foreground/50 hover:text-primary-foreground text-sm transition-colors">
               Términos de Servicio
             </a>
+            <Link to="/admin" className="text-primary-foreground/30 hover:text-primary-foreground text-sm transition-colors flex items-center gap-1">
+              <Lock className="w-3 h-3" />
+              <span className="sr-only">Admin</span>
+            </Link>
           </div>
         </div>
       </div>
