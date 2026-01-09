@@ -14,20 +14,7 @@ Gestionar la cotización de forma global desde cualquier parte de la aplicación
 
 Mantener una arquitectura preparada para una futura integración con una API backend.
 
-🏗️ Arquitectura General
-
-El proyecto sigue una arquitectura modular basada en React, con separación clara de responsabilidades y flujo de datos unidireccional.
-
-src/
-│
-├── pages/        # Vistas y enrutamiento
-├── components/   # Componentes de UI y componentes funcionales
-│   └── ui/       # Componentes atómicos reutilizables
-├── context/      # Estado global (Context API)
-├── hooks/        # Hooks personalizados
-├── data/         # Datos estáticos / simulados
-├── lib/          # Utilidades y funciones auxiliares
-└── types/        # Tipos e interfaces TypeScript
+---------------------------------------------------------------------------------------------------
 
 📂 Descripción de Capas
 📄 src/pages — Vistas y Enrutamiento
@@ -44,6 +31,7 @@ Index.tsx → Página principal
 
 NotFound.tsx → Página 404
 
+---------------------------------------------------------------------------------------------------
 
 🧩 src/components — Presentación y Lógica UI
 
@@ -94,6 +82,8 @@ Centraliza la información del catálogo.
 
 Preparado para ser reemplazado por una API real en el futuro.
 
+---------------------------------------------------------------------------------------------------
+
 🛠️ src/lib y src/types — Utilidades y Tipado
 lib/
 
@@ -111,6 +101,7 @@ Interfaces y tipos TypeScript compartidos.
 
 Mejora la robustez del código y la experiencia de desarrollo (DX).
 
+---------------------------------------------------------------------------------------------------
 
 🔄 Flujo de Comunicación (One-Way Data Flow)
 
@@ -128,6 +119,8 @@ React notifica a los componentes suscritos.
 
 La interfaz se actualiza automáticamente.
 
+---------------------------------------------------------------------------------------------------
+
 🧠 Principios Aplicados
 
 ✅ Separación de responsabilidades
@@ -141,6 +134,8 @@ La interfaz se actualiza automáticamente.
 ✅ Clean Code
 
 ✅ Tipado fuerte con TypeScript
+
+---------------------------------------------------------------------------------------------------
 
 🧪 Tecnologías Utilizadas
 
@@ -156,6 +151,8 @@ Tailwind CSS
 
 shadcn/ui (UI Components)
 
+---------------------------------------------------------------------------------------------------
+
 📈 Escalabilidad Futura
 
 El proyecto está preparado para:
@@ -169,6 +166,8 @@ Persistencia del carrito.
 Exportación de cotizaciones (PDF / WhatsApp / Email).
 
 Migración de data/ a backend real.
+
+---------------------------------------------------------------------------------------------------
 
 👨‍💻 Autor
 
